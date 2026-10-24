@@ -1,0 +1,8 @@
+.DS_Store
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+
+# Planning docs kept out of the public repo; their history is in TakeCast-archive.
+docs/internal/

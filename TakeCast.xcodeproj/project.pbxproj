@@ -1,0 +1,555 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 100;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		1557CC74301F5D6A0034B24A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1557CC50301F5D6A0034B24A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1557CC57301F5D6A0034B24A;
+			remoteInfo = "TakeCast";
+		};
+		1557CC7E301F5D6A0034B24A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1557CC50301F5D6A0034B24A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1557CC57301F5D6A0034B24A;
+			remoteInfo = "TakeCast";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1557CC58301F5D6A0034B24A /* TakeCast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TakeCast.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1557CC73301F5D6A0034B24A /* TakeCastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TakeCastTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1557CC7D301F5D6A0034B24A /* TakeCastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TakeCastUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1557CC85301F5D6A0034B24A /* Exceptions for "TakeCast" folder in "TakeCast" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1557CC57301F5D6A0034B24A /* TakeCast */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1557CC5A301F5D6A0034B24A /* TakeCast */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1557CC85301F5D6A0034B24A /* Exceptions for "TakeCast" folder in "TakeCast" target */,
+			);
+			path = "TakeCast";
+			sourceTree = "<group>";
+		};
+		1557CC76301F5D6A0034B24A /* TakeCastTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "TakeCastTests";
+			sourceTree = "<group>";
+		};
+		1557CC80301F5D6A0034B24A /* TakeCastUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "TakeCastUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1557CC55301F5D6A0034B24A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		1557CC70301F5D6A0034B24A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		1557CC7A301F5D6A0034B24A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1557CC4F301F5D6A0034B24A = {
+			isa = PBXGroup;
+			children = (
+				1557CC5A301F5D6A0034B24A /* TakeCast */,
+				1557CC76301F5D6A0034B24A /* TakeCastTests */,
+				1557CC80301F5D6A0034B24A /* TakeCastUITests */,
+				1557CC59301F5D6A0034B24A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1557CC59301F5D6A0034B24A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1557CC58301F5D6A0034B24A /* TakeCast.app */,
+				1557CC73301F5D6A0034B24A /* TakeCastTests.xctest */,
+				1557CC7D301F5D6A0034B24A /* TakeCastUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1557CC57301F5D6A0034B24A /* TakeCast */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1557CC86301F5D6A0034B24A /* Build configuration list for PBXNativeTarget "TakeCast" */;
+			buildPhases = (
+				1557CC54301F5D6A0034B24A /* Sources */,
+				1557CC55301F5D6A0034B24A /* Frameworks */,
+				1557CC56301F5D6A0034B24A /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				1557CC5A301F5D6A0034B24A /* TakeCast */,
+			);
+			name = "TakeCast";
+			productName = "TakeCast";
+			productReference = 1557CC58301F5D6A0034B24A /* TakeCast.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1557CC72301F5D6A0034B24A /* TakeCastTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1557CC8B301F5D6A0034B24A /* Build configuration list for PBXNativeTarget "TakeCastTests" */;
+			buildPhases = (
+				1557CC6F301F5D6A0034B24A /* Sources */,
+				1557CC70301F5D6A0034B24A /* Frameworks */,
+				1557CC71301F5D6A0034B24A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1557CC75301F5D6A0034B24A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1557CC76301F5D6A0034B24A /* TakeCastTests */,
+			);
+			name = "TakeCastTests";
+			productName = "TakeCastTests";
+			productReference = 1557CC73301F5D6A0034B24A /* TakeCastTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		1557CC7C301F5D6A0034B24A /* TakeCastUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1557CC8E301F5D6A0034B24A /* Build configuration list for PBXNativeTarget "TakeCastUITests" */;
+			buildPhases = (
+				1557CC79301F5D6A0034B24A /* Sources */,
+				1557CC7A301F5D6A0034B24A /* Frameworks */,
+				1557CC7B301F5D6A0034B24A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1557CC7F301F5D6A0034B24A /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1557CC80301F5D6A0034B24A /* TakeCastUITests */,
+			);
+			name = "TakeCastUITests";
+			productName = "TakeCastUITests";
+			productReference = 1557CC7D301F5D6A0034B24A /* TakeCastUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1557CC50301F5D6A0034B24A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				CLASSPREFIX = ES;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					1557CC57301F5D6A0034B24A = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					1557CC72301F5D6A0034B24A = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 1557CC57301F5D6A0034B24A;
+					};
+					1557CC7C301F5D6A0034B24A = {
+						CreatedOnToolsVersion = 26.6;
+						TestTargetID = 1557CC57301F5D6A0034B24A;
+					};
+				};
+			};
+			buildConfigurationList = 1557CC53301F5D6A0034B24A /* Build configuration list for PBXProject "TakeCast" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1557CC4F301F5D6A0034B24A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 100;
+			productRefGroup = 1557CC59301F5D6A0034B24A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1557CC57301F5D6A0034B24A /* TakeCast */,
+				1557CC72301F5D6A0034B24A /* TakeCastTests */,
+				1557CC7C301F5D6A0034B24A /* TakeCastUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1557CC56301F5D6A0034B24A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		1557CC71301F5D6A0034B24A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		1557CC7B301F5D6A0034B24A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1557CC54301F5D6A0034B24A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		1557CC6F301F5D6A0034B24A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		1557CC79301F5D6A0034B24A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1557CC75301F5D6A0034B24A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1557CC57301F5D6A0034B24A /* TakeCast */;
+			targetProxy = 1557CC74301F5D6A0034B24A /* PBXContainerItemProxy */;
+		};
+		1557CC7F301F5D6A0034B24A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1557CC57301F5D6A0034B24A /* TakeCast */;
+			targetProxy = 1557CC7E301F5D6A0034B24A /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1557CC87301F5D6A0034B24A /* Debug configuration for PBXNativeTarget "TakeCast" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TakeCast/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = TakeCast;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "TakeCast records 4K video with the rear camera.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "TakeCast can stream to a test ingest server on your local network.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "TakeCast records audio for the archive and the live stream.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.ES-Capture";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		1557CC88301F5D6A0034B24A /* Release configuration for PBXNativeTarget "TakeCast" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "TakeCast/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = TakeCast;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "TakeCast records 4K video with the rear camera.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "TakeCast can stream to a test ingest server on your local network.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "TakeCast records audio for the archive and the live stream.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.ES-Capture";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		1557CC89301F5D6A0034B24A /* Debug configuration for PBXProject "TakeCast" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		1557CC8A301F5D6A0034B24A /* Release configuration for PBXProject "TakeCast" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1557CC8C301F5D6A0034B24A /* Debug configuration for PBXNativeTarget "TakeCastTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.ES-CaptureTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TakeCast.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TakeCast";
+			};
+			name = Debug;
+		};
+		1557CC8D301F5D6A0034B24A /* Release configuration for PBXNativeTarget "TakeCastTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.ES-CaptureTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TakeCast.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/TakeCast";
+			};
+			name = Release;
+		};
+		1557CC8F301F5D6A0034B24A /* Debug configuration for PBXNativeTarget "TakeCastUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.ES-CaptureUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = "TakeCast";
+			};
+			name = Debug;
+		};
+		1557CC90301F5D6A0034B24A /* Release configuration for PBXNativeTarget "TakeCastUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2PYWYF3C55;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.elarity.ES-CaptureUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = "TakeCast";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1557CC53301F5D6A0034B24A /* Build configuration list for PBXProject "TakeCast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1557CC89301F5D6A0034B24A /* Debug configuration for PBXProject "TakeCast" */,
+				1557CC8A301F5D6A0034B24A /* Release configuration for PBXProject "TakeCast" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		1557CC86301F5D6A0034B24A /* Build configuration list for PBXNativeTarget "TakeCast" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1557CC87301F5D6A0034B24A /* Debug configuration for PBXNativeTarget "TakeCast" */,
+				1557CC88301F5D6A0034B24A /* Release configuration for PBXNativeTarget "TakeCast" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		1557CC8B301F5D6A0034B24A /* Build configuration list for PBXNativeTarget "TakeCastTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1557CC8C301F5D6A0034B24A /* Debug configuration for PBXNativeTarget "TakeCastTests" */,
+				1557CC8D301F5D6A0034B24A /* Release configuration for PBXNativeTarget "TakeCastTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		1557CC8E301F5D6A0034B24A /* Build configuration list for PBXNativeTarget "TakeCastUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1557CC8F301F5D6A0034B24A /* Debug configuration for PBXNativeTarget "TakeCastUITests" */,
+				1557CC90301F5D6A0034B24A /* Release configuration for PBXNativeTarget "TakeCastUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1557CC50301F5D6A0034B24A /* Project object */;
+}

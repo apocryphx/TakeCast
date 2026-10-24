@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- The text of the in-app YouTube setup guide. {{APP}} is replaced with the
+     app's display name when the PDF is rendered. Re-verify YouTube's own help
+     pages before each release: Studio's menus and wording change. -->
+<style>
+  body { font-family: -apple-system, Helvetica, sans-serif; font-size: 11pt; line-height: 1.4; color: #1c1c1e; }
+  h1 { font-size: 22pt; margin: 0 0 4pt 0; }
+  h2 { font-size: 14pt; margin: 16pt 0 4pt 0; border-bottom: 1px solid #d1d1d6; padding-bottom: 2pt; }
+  p, li { margin: 3pt 0; }
+  ol, ul { padding-left: 18pt; margin: 4pt 0; }
+  code { font-family: Menlo, monospace; font-size: 9pt; background: #f2f2f7; padding: 1pt 3pt; }
+  .subtitle { color: #636366; margin-bottom: 10pt; }
+  .warning { border: 1.5pt solid #ff9500; background: #fff4e5; padding: 6pt 9pt; margin: 8pt 0; font-weight: 600; }
+  .note { color: #636366; font-size: 9.5pt; }
+  table { border-collapse: collapse; width: 100%; margin: 6pt 0; }
+  td, th { border: 1px solid #d1d1d6; padding: 3pt 6pt; text-align: left; vertical-align: top; font-size: 10pt; }
+  .insert { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>{{APP}}: YouTube setup guide</h1>
+<p class="subtitle">Record your event in 4K on your iPhone and stream it live to YouTube. Your full-quality copy is safe whatever happens to the stream.</p>
+
+<h2>1. What you need</h2>
+<ul>
+  <li>A YouTube account with a <b>verified channel</b> (verify at youtube.com/verify).</li>
+  <li><b>Live streaming enabled</b> on that channel.</li>
+  <li>Time: set this up <b>at least a day before</b> your event.</li>
+  <li>Someone else can do all of this for you. Give them the one-page insert at the end of this guide.</li>
+</ul>
+
+<h2>2. Enable live streaming</h2>
+<p>In YouTube Studio (studio.youtube.com) choose <b>Create &gt; Go live</b>. The first time, YouTube asks you to enable live streaming.</p>
+<div class="warning">YouTube can take up to 24 hours to enable live streaming the first time. Do this at least a day before your event.</div>
+<p class="note">YouTube states this wait for streaming from its mobile app. It is not confirmed for streaming from an encoder such as {{APP}}, but plan for it: missing it ruins an event.</p>
+
+<h2>3. Create the stream</h2>
+<ol>
+  <li>In the live control room, open <b>Stream</b>.</li>
+  <li>Create a <b>new stream key</b> and choose <b>HLS</b> as its streaming protocol.</li>
+  <li>In the stream settings, turn on <b>Auto-start</b> and <b>Auto-stop</b>. Then REC in {{APP}} starts the broadcast and STOP ends it, with no clicks in Studio during the event.</li>
+  <li>Set visibility to <b>Unlisted</b> for the event (or <b>Private</b> for a test).</li>
+  <li>Your ingest URL is built from the stream key:<br>
+      <code>https://a.upload.youtube.com/http_upload_hls?cid=YOUR-STREAM-KEY&amp;copy=0&amp;file=</code></li>
+</ol>
+<p class="note">The ingest URL contains your stream key. Treat it like a password: anyone who has it can broadcast on your channel.</p>
+
+<h2>4. Paste the URL into {{APP}}</h2>
+<p>Open {{APP}} &gt; <b>Setup</b>, turn on <b>Stream to YouTube</b> and paste the URL. Setup shows only the host (for example <code>a.upload.youtube.com</code>), never the key. Leave streaming off to record without streaming.</p>
+
+<h2>5. Test before the event</h2>
+<p>Run a short private test with a separate stream key: press REC, watch the <b>LIVE</b> lamp turn green, check the picture in Studio, press STOP. Do it at the venue if you can, where the phone will actually stand.</p>
+
+<h2>6. Share the right link</h2>
+<p>Send guests your channel's live link, <code>youtube.com/@yourchannel/live</code>. It always points to whatever is live now, so it keeps working even if a broadcast has to restart. A link to one broadcast does not.</p>
+
+<h2>7. During the event</h2>
+<ul>
+  <li><b>Power:</b> plug the phone in. 4K recording and streaming drain the battery fast.</li>
+  <li><b>Brightness:</b> turn the screen well down. Heat lowers the stream before anything else.</li>
+  <li><b>Network:</b> if the venue Wi-Fi is weak, turn Wi-Fi off. iPhone prefers any Wi-Fi over cellular, even a bad one.</li>
+  <li><b>Silence:</b> turn on a Focus that allows no calls and no repeated calls, check alarms in Clock, and turn off Listen for "Siri" and vibration in Silent mode.</li>
+  <li><b>Stay in the app:</b> leaving it pauses capture. Guided Access (Settings &gt; Accessibility) keeps it on screen.</li>
+  <li>Frame the shot, tap <b>LOCK</b>, then press <b>REC</b>. At the end, keep recording a little past the moment before STOP.</li>
+</ul>
+
+<h2>8. After the event</h2>
+<p>Your full-quality 4K recording is on the phone. Open {{APP}} &gt; <b>Recordings</b> and use <b>Share</b> to save it to Photos, Files, AirDrop or another app. An hour of 4K takes about 18 GB. The YouTube copy of the broadcast stays on your channel.</p>
+
+<h2>9. What the lamps mean</h2>
+<table>
+  <tr><th>Lamp</th><th>Meaning</th></tr>
+  <tr><td>REC</td><td>Time and file size of the recording. <b>REC INTERRUPTED</b> (yellow): capture paused, usually because the app left the screen. Return to the app at once.</td></tr>
+  <tr><td>LIVE</td><td>Seconds since YouTube last accepted video. Green is healthy, orange is slow, red means the stream is struggling. The recording continues either way.</td></tr>
+  <tr><td>THERM</td><td>Phone temperature. When it rises the stream is lowered or stopped to protect the recording.</td></tr>
+  <tr><td>BCAST</td><td>The stream's current quality (1080p, 720p or off) and what lowered it: <b>therm</b> (heat) or <b>net</b> (network).</td></tr>
+  <tr><td>DOCK</td><td>A DockKit gimbal: battery and whether it is tracking (TRK) or holding still (HELD).</td></tr>
+</table>
+
+<h2>10. Good to know</h2>
+<ul>
+  <li><b>Unlisted is not private.</b> Anyone with the link can watch. Do not use it for confidential material.</li>
+  <li>Do not stream or record unpublished data, patient information, or anything covered by confidentiality rules or an institution's recording policy. Some institutions block YouTube.</li>
+  <li>Tell people in the room that they are being recorded.</li>
+  <li>For children's events, keep the stream unlisted and share the link only with the intended viewers.</li>
+</ul>
+<p class="note">This guide is practical advice, not legal advice.</p>
+
+<div class="insert">
+<h1>For your support staff</h1>
+<p class="subtitle">Someone will record and stream an event from an iPhone with {{APP}}. This page is what they need from you.</p>
+
+<div class="warning">YouTube can take up to 24 hours to enable live streaming the first time. Please start at least a day before the event.</div>
+
+<h2>Please create</h2>
+<ol>
+  <li>A <b>verified</b> YouTube channel with <b>live streaming enabled</b> (YouTube Studio &gt; Create &gt; Go live).</li>
+  <li>A <b>new stream key</b> with the <b>HLS</b> streaming protocol.</li>
+  <li>Stream settings: <b>Auto-start</b> and <b>Auto-stop</b> on, visibility <b>Unlisted</b>.</li>
+</ol>
+
+<h2>Please send the host</h2>
+<ol>
+  <li>The <b>ingest URL</b>: <code>https://a.upload.youtube.com/http_upload_hls?cid=STREAM-KEY&amp;copy=0&amp;file=</code></li>
+  <li>The channel's <b>live link</b> for guests: <code>youtube.com/@channel/live</code></li>
+</ol>
+
+<h2>Send it safely</h2>
+<ul>
+  <li>The ingest URL is a credential. Send it by AirDrop, a password manager or a direct message, <b>never</b> in a group chat, a public channel or a shared email thread.</li>
+  <li>Rotate (replace) the stream key after the event.</li>
+  <li>If you can, run a short private test stream with the host before the day.</li>
+</ul>
+
+<h2>Cautions</h2>
+<ul>
+  <li>An unlisted link is not secure: anyone with it can watch.</li>
+  <li>Check the event against your institution's recording and confidentiality rules.</li>
+</ul>
+</div>
+
+</body>
+</html>
