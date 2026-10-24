@@ -38,8 +38,8 @@ Docs: `docs/EVENT-CHECKLIST.md` (preparing a phone for a long event) and
 
 ## Support
 
-Use the project's GitHub issues. Please **do not post logs, ingest URLs or
-stream keys** there: an ingest URL lets anyone broadcast on your channel. The
+Use the project's [GitHub issues](https://github.com/apocryphx/TakeCast/issues).
+Please **do not post logs, ingest URLs or stream keys** there: an ingest URL lets anyone broadcast on your channel. The
 app never writes the ingest URL or stream key to its own log.
 
 ## License
