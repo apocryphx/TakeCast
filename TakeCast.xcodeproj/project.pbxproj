@@ -12,21 +12,21 @@
 			containerPortal = 1557CC50301F5D6A0034B24A /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1557CC57301F5D6A0034B24A;
-			remoteInfo = "TakeCast";
+			remoteInfo = TakeCast;
 		};
 		1557CC7E301F5D6A0034B24A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1557CC50301F5D6A0034B24A /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1557CC57301F5D6A0034B24A;
-			remoteInfo = "TakeCast";
+			remoteInfo = TakeCast;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1557CC58301F5D6A0034B24A /* TakeCast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TakeCast.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1557CC73301F5D6A0034B24A /* TakeCastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TakeCastTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1557CC7D301F5D6A0034B24A /* TakeCastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "TakeCastUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1557CC58301F5D6A0034B24A /* TakeCast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TakeCast.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1557CC73301F5D6A0034B24A /* TakeCastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TakeCastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1557CC7D301F5D6A0034B24A /* TakeCastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TakeCastUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,17 +45,17 @@
 			exceptions = (
 				1557CC85301F5D6A0034B24A /* Exceptions for "TakeCast" folder in "TakeCast" target */,
 			);
-			path = "TakeCast";
+			path = TakeCast;
 			sourceTree = "<group>";
 		};
 		1557CC76301F5D6A0034B24A /* TakeCastTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "TakeCastTests";
+			path = TakeCastTests;
 			sourceTree = "<group>";
 		};
 		1557CC80301F5D6A0034B24A /* TakeCastUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "TakeCastUITests";
+			path = TakeCastUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -115,8 +115,8 @@
 			fileSystemSynchronizedGroups = (
 				1557CC5A301F5D6A0034B24A /* TakeCast */,
 			);
-			name = "TakeCast";
-			productName = "TakeCast";
+			name = TakeCast;
+			productName = TakeCast;
 			productReference = 1557CC58301F5D6A0034B24A /* TakeCast.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -136,8 +136,8 @@
 			fileSystemSynchronizedGroups = (
 				1557CC76301F5D6A0034B24A /* TakeCastTests */,
 			);
-			name = "TakeCastTests";
-			productName = "TakeCastTests";
+			name = TakeCastTests;
+			productName = TakeCastTests;
 			productReference = 1557CC73301F5D6A0034B24A /* TakeCastTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -157,8 +157,8 @@
 			fileSystemSynchronizedGroups = (
 				1557CC80301F5D6A0034B24A /* TakeCastUITests */,
 			);
-			name = "TakeCastUITests";
-			productName = "TakeCastUITests";
+			name = TakeCastUITests;
+			productName = TakeCastUITests;
 			productReference = 1557CC7D301F5D6A0034B24A /* TakeCastUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -266,7 +266,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 2PYWYF3C55;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "TakeCast/Info.plist";
+				INFOPLIST_FILE = TakeCast/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TakeCast;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -275,7 +275,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "TakeCast records audio for the archive and the live stream.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -299,7 +299,7 @@
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 2PYWYF3C55;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "TakeCast/Info.plist";
+				INFOPLIST_FILE = TakeCast/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = TakeCast;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
@@ -308,7 +308,7 @@
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "TakeCast records audio for the archive and the live stream.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -493,7 +493,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = "TakeCast";
+				TEST_TARGET_NAME = TakeCast;
 			};
 			name = Debug;
 		};
@@ -510,7 +510,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = "TakeCast";
+				TEST_TARGET_NAME = TakeCast;
 			};
 			name = Release;
 		};

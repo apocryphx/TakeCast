@@ -66,6 +66,75 @@
 @interface ESOnboardingViewController () <QLPreviewControllerDataSource>
 @end
 
+@interface ESHelpHeroView : UIView
+@end
+
+@implementation ESHelpHeroView {
+    CAGradientLayer *_gradient;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.layer.cornerRadius = 22;
+        self.clipsToBounds = YES;
+        _gradient = [CAGradientLayer layer];
+        _gradient.colors = @[(id)[UIColor.systemIndigoColor colorWithAlphaComponent:0.96].CGColor,
+                             (id)[UIColor.systemTealColor colorWithAlphaComponent:0.96].CGColor];
+        _gradient.startPoint = CGPointMake(0, 0);
+        _gradient.endPoint = CGPointMake(1, 1);
+        [self.layer insertSublayer:_gradient atIndex:0];
+
+        UIView *badge = [[UIView alloc] init];
+        badge.backgroundColor = [UIColor colorWithWhite:1 alpha:0.18];
+        badge.layer.cornerRadius = 27;
+        badge.translatesAutoresizingMaskIntoConstraints = NO;
+        UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"video.fill"]];
+        icon.tintColor = UIColor.whiteColor;
+        icon.preferredSymbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:25 weight:UIImageSymbolWeightBold];
+        icon.translatesAutoresizingMaskIntoConstraints = NO;
+        [badge addSubview:icon];
+
+        UILabel *title = [[UILabel alloc] init];
+        title.text = @"You have the important part.";
+        title.font = [UIFont systemFontOfSize:20 weight:UIFontWeightBold];
+        title.textColor = UIColor.whiteColor;
+        title.translatesAutoresizingMaskIntoConstraints = NO;
+        UILabel *detail = [[UILabel alloc] init];
+        detail.text = @"TakeCast keeps a 4K copy safe while your audience watches live.";
+        detail.numberOfLines = 0;
+        detail.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+        detail.adjustsFontForContentSizeCategory = YES;
+        detail.textColor = [UIColor colorWithWhite:1 alpha:0.82];
+        detail.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:badge];
+        [self addSubview:title];
+        [self addSubview:detail];
+        [NSLayoutConstraint activateConstraints:@[
+            [badge.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:18],
+            [badge.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
+            [badge.widthAnchor constraintEqualToConstant:54],
+            [badge.heightAnchor constraintEqualToConstant:54],
+            [icon.centerXAnchor constraintEqualToAnchor:badge.centerXAnchor],
+            [icon.centerYAnchor constraintEqualToAnchor:badge.centerYAnchor],
+            [title.leadingAnchor constraintEqualToAnchor:badge.trailingAnchor constant:14],
+            [title.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-18],
+            [title.topAnchor constraintEqualToAnchor:self.topAnchor constant:24],
+            [detail.leadingAnchor constraintEqualToAnchor:title.leadingAnchor],
+            [detail.trailingAnchor constraintEqualToAnchor:title.trailingAnchor],
+            [detail.topAnchor constraintEqualToAnchor:title.bottomAnchor constant:5],
+        ]];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    _gradient.frame = self.bounds;
+}
+
+@end
+
 @implementation ESOnboardingViewController {
     NSURL *_guideURL;
 }
@@ -103,6 +172,10 @@
     self.title = [NSString stringWithFormat:@"Welcome to %@", app];
 
     // 1. What it does
+    ESHelpHeroView *hero = [[ESHelpHeroView alloc] initWithFrame:CGRectZero];
+    [hero.heightAnchor constraintEqualToConstant:126].active = YES;
+    [stack addArrangedSubview:hero];
+    [stack setCustomSpacing:24 afterView:hero];
     [stack addArrangedSubview:ESHeadingLabel([NSString stringWithFormat:@"What %@ does", app])];
     [stack addArrangedSubview:[self _rowWithSymbol:@"lock.shield" text:
         @"Records your event in 4K and keeps that copy safe, whatever happens to the stream."]];
@@ -168,21 +241,42 @@
 }
 
 - (UIView *)_rowWithSymbol:(NSString *)symbol text:(NSString *)text {
+    UIColor *tint = [self _tintForSymbol:symbol];
+    UIView *badge = [[UIView alloc] init];
+    badge.backgroundColor = [tint colorWithAlphaComponent:0.16];
+    badge.layer.cornerRadius = 19;
+    badge.translatesAutoresizingMaskIntoConstraints = NO;
     UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:symbol]];
-    icon.tintColor = UIColor.tintColor;
+    icon.tintColor = tint;
     icon.contentMode = UIViewContentModeScaleAspectFit;
     icon.preferredSymbolConfiguration = [UIImageSymbolConfiguration configurationWithTextStyle:UIFontTextStyleBody];
-    [icon setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
-    [icon.widthAnchor constraintEqualToConstant:28].active = YES;
+    icon.translatesAutoresizingMaskIntoConstraints = NO;
+    [badge addSubview:icon];
+    [NSLayoutConstraint activateConstraints:@[
+        [badge.widthAnchor constraintEqualToConstant:38],
+        [badge.heightAnchor constraintEqualToConstant:38],
+        [icon.centerXAnchor constraintEqualToAnchor:badge.centerXAnchor],
+        [icon.centerYAnchor constraintEqualToAnchor:badge.centerYAnchor],
+    ]];
 
     UILabel *label = ESBodyLabel(text);
     label.textColor = UIColor.labelColor;
 
-    UIStackView *row = [[UIStackView alloc] initWithArrangedSubviews:@[icon, label]];
+    UIStackView *row = [[UIStackView alloc] initWithArrangedSubviews:@[badge, label]];
     row.axis = UILayoutConstraintAxisHorizontal;
-    row.alignment = UIStackViewAlignmentFirstBaseline;
-    row.spacing = 10;
+    row.alignment = UIStackViewAlignmentCenter;
+    row.spacing = 12;
     return row;
+}
+
+- (UIColor *)_tintForSymbol:(NSString *)symbol {
+    if ([symbol containsString:@"checkmark"]) return UIColor.systemGreenColor;
+    if ([symbol containsString:@"radiowaves"]) return UIColor.systemPinkColor;
+    if ([symbol containsString:@"thermometer"]) return UIColor.systemOrangeColor;
+    if ([symbol containsString:@"hand"]) return UIColor.systemRedColor;
+    if ([symbol containsString:@"eye"]) return UIColor.systemIndigoColor;
+    if ([symbol containsString:@"person"]) return UIColor.systemTealColor;
+    return UIColor.systemBlueColor;
 }
 
 - (void)_finishWithChoice:(ESOnboardingChoice)choice {
@@ -206,6 +300,6 @@
     return _guideURL;
 }
 
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations { return UIInterfaceOrientationMaskLandscape; }
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations { return UIInterfaceOrientationMaskAllButUpsideDown; }
 
 @end

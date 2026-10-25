@@ -32,6 +32,7 @@ static const CGFloat ESDockZoomStep = 0.025;
 @interface ESStatusLamp : UIView
 @property (nonatomic, readonly) UILabel *label;
 - (void)setDotColor:(UIColor *)color;
+- (void)setPulsing:(BOOL)pulsing;
 @end
 
 @implementation ESStatusLamp {
@@ -66,6 +67,22 @@ static const CGFloat ESDockZoomStep = 0.025;
 
 - (void)setDotColor:(UIColor *)color {
     _dot.backgroundColor = color;
+}
+
+- (void)setPulsing:(BOOL)pulsing {
+    static NSString * const ESPulseKey = @"es.recordingPulse";
+    if (!pulsing) {
+        [_dot.layer removeAnimationForKey:ESPulseKey];
+        return;
+    }
+    if ([_dot.layer animationForKey:ESPulseKey]) return;
+    CABasicAnimation *pulse = [CABasicAnimation animationWithKeyPath:@"opacity"];
+    pulse.fromValue = @1.0;
+    pulse.toValue = @0.28;
+    pulse.duration = 0.72;
+    pulse.autoreverses = YES;
+    pulse.repeatCount = HUGE_VALF;
+    [_dot.layer addAnimation:pulse forKey:ESPulseKey];
 }
 
 @end
@@ -207,27 +224,29 @@ static const CGFloat ESPillInsetY = 3;
     ESLevelView *_levelView;
     UIButton *_startStopButton;
     UIButton *_lockButton;
-    UIButton *_setupButton;
-    UIButton *_recordingsButton;
+    UIButton *_closeButton;
     UISlider *_zoomSlider;
     ESPillLabel *_zoomLabel;
     ESPillLabel *_summaryLabel;
     ESPillLabel *_messageLabel;
     NSTimer *_hudTimer;
+    NSTimer *_messageTimer;
 
     BOOL _sessionActive;
     NSDate *_recordStartDate;
     NSDate *_interruptionStartDate;
     NSURL *_archiveURL;
     NSUInteger _hudTickCount;
-    BOOL _didRunLaunchFlow;
+    BOOL _previewConfigured;
+    BOOL _previewPermissionRequestPending;
+    NSString *_recordingAudioRoute;
+    BOOL _recordingAudioWasExternal;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Only ever visible before the preview layer has a session to draw. Black on
-    // black left the idle screen unreadable; light grey gives the controls
-    // something to sit against.
+    // This is only a brief fallback while permission or the live preview is
+    // being set up. The controls remain legible during that transition.
     self.view.backgroundColor = UIColor.lightGrayColor;
     UIDevice.currentDevice.batteryMonitoringEnabled = YES;
 
@@ -286,14 +305,30 @@ static const CGFloat ESPillInsetY = 3;
     [_startStopButton addTarget:self action:@selector(_startStopTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_startStopButton];
 
-    _lockButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [_lockButton setTitle:@"AUTO" forState:UIControlStateNormal];
-    _lockButton.titleLabel.font = [UIFont boldSystemFontOfSize:13];
-    _lockButton.tintColor = UIColor.whiteColor;
-    _lockButton.backgroundColor = [UIColor colorWithWhite:0 alpha:0.55];
-    _lockButton.layer.cornerRadius = 6;
+    UIButtonConfiguration *lockConfiguration = [UIButtonConfiguration glassButtonConfiguration];
+    lockConfiguration.image = [UIImage systemImageNamed:@"viewfinder"];
+    lockConfiguration.baseForegroundColor = UIColor.whiteColor;
+    lockConfiguration.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
+    lockConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(12, 12, 12, 12);
+    _lockButton = [UIButton buttonWithConfiguration:lockConfiguration primaryAction:nil];
+    _lockButton.accessibilityLabel = @"Lock focus, exposure, and white balance";
     [_lockButton addTarget:self action:@selector(_lockTapped) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_lockButton];
+
+    // Use UIKit's native Liquid Glass control rather than a blurred grey
+    // circle. The system material supplies a real highlight, depth, and
+    // pressed state over both bright and dark footage.
+    UIButtonConfiguration *closeConfiguration = [UIButtonConfiguration glassButtonConfiguration];
+    UIImageSymbolConfiguration *closeSymbol =
+        [UIImageSymbolConfiguration configurationWithPointSize:19 weight:UIImageSymbolWeightMedium];
+    closeConfiguration.image = [UIImage systemImageNamed:@"xmark" withConfiguration:closeSymbol];
+    closeConfiguration.baseForegroundColor = UIColor.whiteColor;
+    closeConfiguration.cornerStyle = UIButtonConfigurationCornerStyleCapsule;
+    closeConfiguration.contentInsets = NSDirectionalEdgeInsetsMake(12, 12, 12, 12);
+    _closeButton = [UIButton buttonWithConfiguration:closeConfiguration primaryAction:nil];
+    _closeButton.accessibilityLabel = @"Close camera";
+    [_closeButton addTarget:self action:@selector(_closeTapped) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_closeButton];
 
     // The mic pattern is a session setting chosen in Setup, but the engine
     // takes it as soon as it is known so the route has settled by REC.
@@ -319,13 +354,6 @@ static const CGFloat ESPillInsetY = 3;
     _summaryLabel.textColor = [UIColor colorWithWhite:1 alpha:0.85];
     [self.view addSubview:_summaryLabel];
 
-    __weak typeof(self) weakControls = self;
-    _setupButton = [self _barButtonWithTitle:@"Setup" symbol:@"slider.horizontal.3"
-                                     handler:^{ [weakControls _showSetup]; }];
-    _recordingsButton = [self _barButtonWithTitle:@"Recordings" symbol:@"film.stack"
-                                          handler:^{ [weakControls _showRecordings]; }];
-    [self.view addSubview:_setupButton];
-    [self.view addSubview:_recordingsButton];
     [self _updateSessionSummary];
 
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self
@@ -349,16 +377,20 @@ static const CGFloat ESPillInsetY = 3;
     _previewLayer.frame = bounds;
     _levelView.frame = CGRectMake(w / 2 - 160, h / 2 - 60, 320, 120);
 
+    // The exit control is intentionally larger than a plain glyph. Its glass
+    // backing remains legible above both bright ceremony scenes and darkness.
+    _closeButton.frame = CGRectMake(w - rightInset - 48, topInset, 48, 48);
+    _lockButton.frame = CGRectMake(CGRectGetMinX(_closeButton.frame) - 56, topInset, 48, 48);
     // Lamps run left to right at fixed widths and wrap to a second row when
-    // a narrow screen runs out of room before the lock button, rather than
+    // a narrow screen runs out of room before the controls, rather than
     // shrinking or hiding one.
-    _lockButton.frame = CGRectMake(w - rightInset - 64, topInset, 64, 28);
-    CGFloat lampRight = w - rightInset - 72;
+    CGFloat lampRight = CGRectGetMinX(_lockButton.frame) - 8;
     CGFloat x = leftInset;
     CGFloat y = topInset;
     NSArray<ESStatusLamp *> *lamps = @[_recLamp, _liveLamp, _thermLamp, _tierLamp, _dockLamp];
     NSArray<NSNumber *> *widths = @[@214, @120, @140, @150, @190];
     for (NSUInteger i = 0; i < lamps.count; i++) {
+        if (lamps[i].hidden) continue;
         CGFloat width = widths[i].doubleValue;
         if (x > leftInset && x + width > lampRight) {
             x = leftInset;
@@ -374,14 +406,9 @@ static const CGFloat ESPillInsetY = 3;
     _messageLabel.frame = CGRectMake(leftInset, y + 34, MIN(messageMax, messageWidth), 22);
 
     _startStopButton.frame = CGRectMake(w - rightInset - 64, h - bottomInset - 64, 64, 64);
-    CGSize setupSize = [_setupButton sizeThatFits:CGSizeMake(200, 36)];
-    CGSize recordingsSize = [_recordingsButton sizeThatFits:CGSizeMake(200, 36)];
-    _setupButton.frame = CGRectMake(leftInset, h - bottomInset - 36, setupSize.width, 36);
-    _recordingsButton.frame = CGRectMake(CGRectGetMaxX(_setupButton.frame) + 8, h - bottomInset - 36,
-                                         recordingsSize.width, 36);
     CGFloat summaryMax = w - leftInset - rightInset - 80;
     CGFloat summaryWidth = [_summaryLabel sizeThatFits:CGSizeMake(summaryMax, CGFLOAT_MAX)].width;
-    _summaryLabel.frame = CGRectMake(leftInset, h - bottomInset - 36 - 30, MIN(summaryMax, summaryWidth), 22);
+    _summaryLabel.frame = CGRectMake(leftInset, h - bottomInset - 22, MIN(summaryMax, summaryWidth), 22);
 
     // The slider is rotated; position it by center with its pre-rotation length.
     CGFloat sliderLength = MIN(240, h * 0.45);
@@ -455,38 +482,38 @@ static const CGFloat ESPillInsetY = 3;
     [self _syncLockControlToEngine];
 }
 
+- (void)_closeTapped {
+    if (_sessionActive) {
+        [self _showAlertWithTitle:@"Recording in progress"
+                          message:@"Stop the recording before leaving the camera."];
+        return;
+    }
+    // Releasing the camera is deliberate when leaving this screen; returning
+    // to it starts the preview again in viewDidAppear:.
+    [_engine stopRunning];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 // The button reflects what the camera reports, never what we assumed we set.
 // Configuring a session resets the camera's modes, so the two can part company
 // unless something puts them back together. Deliberately does not touch gimbal
 // tracking: starting a recording must not undo a tracking button press.
 - (void)_syncLockControlToEngine {
     BOOL locked = _engine.isLocked;
-    [_lockButton setTitle:locked ? @"LOCK" : @"AUTO" forState:UIControlStateNormal];
-    _lockButton.tintColor = locked ? UIColor.systemYellowColor : UIColor.whiteColor;
+    UIButtonConfiguration *configuration = _lockButton.configuration;
+    UIImageSymbolConfiguration *symbol =
+        [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightSemibold];
+    configuration.image = [UIImage systemImageNamed:locked ? @"lock.fill" : @"viewfinder"
+                                  withConfiguration:symbol];
+    configuration.baseForegroundColor = locked ? UIColor.systemYellowColor : UIColor.whiteColor;
+    _lockButton.configuration = configuration;
+    _lockButton.accessibilityLabel = locked
+        ? @"Unlock focus, exposure, and white balance"
+        : @"Lock focus, exposure, and white balance";
+    _lockButton.accessibilityValue = locked ? @"Locked" : @"Automatic";
     [self _appendLog:[NSString stringWithFormat:@"LOCK %@, camera reports %@",
                       locked ? @"on" : @"off", _engine.cameraModeDescription]];
     [self _updateDockLamp];
-}
-
-- (UIButton *)_barButtonWithTitle:(NSString *)title symbol:(NSString *)symbol handler:(void (^)(void))handler {
-    UIButtonConfiguration *config = [UIButtonConfiguration plainButtonConfiguration];
-    config.title = title;
-    config.image = [UIImage systemImageNamed:symbol];
-    config.imagePadding = 6;
-    config.preferredSymbolConfigurationForImage =
-        [UIImageSymbolConfiguration configurationWithPointSize:13 weight:UIImageSymbolWeightSemibold];
-    config.baseForegroundColor = UIColor.whiteColor;
-    config.titleTextAttributesTransformer = ^NSDictionary *(NSDictionary *attributes) {
-        NSMutableDictionary *updated = [attributes mutableCopy];
-        updated[NSFontAttributeName] = [UIFont boldSystemFontOfSize:13];
-        return updated;
-    };
-    config.background.backgroundColor = [UIColor colorWithWhite:0 alpha:0.55];
-    config.background.cornerRadius = 6;
-    config.contentInsets = NSDirectionalEdgeInsetsMake(6, 10, 6, 12);
-    return [UIButton buttonWithConfiguration:config primaryAction:[UIAction actionWithHandler:^(UIAction *a) {
-        handler();
-    }]];
 }
 
 - (void)_updateSessionSummary {
@@ -494,23 +521,19 @@ static const CGFloat ESPillInsetY = 3;
     [self.view setNeedsLayout];
 }
 
-// Session settings and the recordings list only exist between sessions.
-- (void)_updateIdleControls {
-    _setupButton.hidden = _sessionActive;
-    _recordingsButton.hidden = _sessionActive;
-}
-
 #pragma mark - Launch flow and other screens
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    if (_didRunLaunchFlow) return;
-    _didRunLaunchFlow = YES;
-    if (!ESSettings.hasCompletedOnboarding) {
-        [self _showOnboarding];
-    } else {
-        [self _explainIfCameraDenied];
-    }
+    [self _explainIfCameraDenied];
+    [self _startLivePreviewIfPossible];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    // Do not keep the camera or its privacy indicator active behind Setup or
+    // Recordings. It starts again when the landscape camera returns.
+    if (!_sessionActive) [_engine stopRunning];
 }
 
 - (void)_showOnboarding {
@@ -569,12 +592,11 @@ static const CGFloat ESPillInsetY = 3;
     [self presentViewController:nav animated:YES completion:nil];
 }
 
-// The preview only draws once REC starts the session, so a denied camera
-// otherwise looks like nothing more than a grey screen.
+// A permission denial would otherwise look like a grey preview surface.
 - (void)_explainIfCameraDenied {
     AVAuthorizationStatus video = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
     if (video == AVAuthorizationStatusDenied || video == AVAuthorizationStatusRestricted) {
-        [self _showMessage:[NSString stringWithFormat:@"Camera access is off, so %@ cannot record. Open Setup to fix it.",
+        [self _showMessage:[NSString stringWithFormat:@"Camera access is off, so %@ cannot record. Return to Setup from Home to fix it.",
                             ESAppName()]];
     }
 }
@@ -611,6 +633,51 @@ static const CGFloat ESPillInsetY = 3;
     }];
 }
 
+- (void)_startLivePreviewIfPossible {
+    AVAuthorizationStatus video = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (video == AVAuthorizationStatusAuthorized) {
+        if ([self _prepareCameraForCurrentSettings]) [_engine startRunning];
+        return;
+    }
+    if (video == AVAuthorizationStatusNotDetermined && !_previewPermissionRequestPending) {
+        _previewPermissionRequestPending = YES;
+        __weak typeof(self) weakSelf = self;
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL granted) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                typeof(self) strongSelf = weakSelf;
+                if (!strongSelf) return;
+                strongSelf->_previewPermissionRequestPending = NO;
+                if (granted && strongSelf.view.window) [strongSelf _startLivePreviewIfPossible];
+            });
+        }];
+    }
+}
+
+- (BOOL)_prepareCameraForCurrentSettings {
+    NSInteger fps = ESSettings.frameRate;
+    if (!_previewConfigured || _engine.frameRate != fps) {
+        // Preview may already be running with an earlier setting. Stop on the
+        // engine's session queue before asking AVCapture to change formats.
+        [_engine stopRunningAndWait];
+        NSError *error = nil;
+        if (![_engine configureWithFrameRate:fps error:&error]) {
+            [self _showAlertWithTitle:@"Camera configuration failed"
+                              message:error.localizedDescription ?: @"Unknown error"];
+            return NO;
+        }
+        _previewConfigured = YES;
+        // Configuring resets the camera to continuous focus, exposure, and
+        // white balance, so put the visible LOCK state back in step with it.
+        [self _syncLockControlToEngine];
+    }
+
+    CGFloat rotation = [self _interfaceRotationAngle];
+    if ([_previewLayer.connection isVideoRotationAngleSupported:rotation]) {
+        _previewLayer.connection.videoRotationAngle = rotation;
+    }
+    return YES;
+}
+
 - (void)_requestCaptureAuthorizationThen:(void (^)(BOOL granted))completion {
     [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^(BOOL videoGranted) {
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL audioGranted) {
@@ -623,21 +690,8 @@ static const CGFloat ESPillInsetY = 3;
 
 - (void)_startSession {
     NSInteger fps = ESSettings.frameRate;
+    if (![self _prepareCameraForCurrentSettings]) return;
     NSError *error = nil;
-    if (![_engine configureWithFrameRate:fps error:&error]) {
-        [self _showAlertWithTitle:@"Camera configuration failed"
-                          message:error.localizedDescription ?: @"Unknown error"];
-        return;
-    }
-
-    // Configuring reset the camera to continuous focus, exposure, and white
-    // balance, so put the LOCK control back in step with it.
-    [self _syncLockControlToEngine];
-
-    CGFloat rotation = [self _interfaceRotationAngle];
-    if ([_previewLayer.connection isVideoRotationAngleSupported:rotation]) {
-        _previewLayer.connection.videoRotationAngle = rotation;
-    }
 
     _archiveURL = [self _newArchiveURL];
     NSDictionary *archiveConfig = @{
@@ -676,6 +730,9 @@ static const CGFloat ESPillInsetY = 3;
 
     _sessionActive = YES;
     _recordStartDate = [NSDate date];
+    _recordingAudioRoute = _engine.currentAudioRouteName;
+    _recordingAudioWasExternal = _engine.audioRouteIsExternal;
+    [_recLamp setPulsing:YES];
     _hudTickCount = 0;
     _thermalTier = ESBroadcastTierFull;
     // Join low: the broadcast starts at 720p and earns 1080p with proven
@@ -693,7 +750,6 @@ static const CGFloat ESPillInsetY = 3;
     [self _logInstrumentStatus];
 
     [UIApplication sharedApplication].idleTimerDisabled = YES;
-    [self _updateIdleControls];
     [self _updateSessionSummary];
     [_startStopButton setTitle:@"STOP" forState:UIControlStateNormal];
     _startStopButton.backgroundColor = [UIColor colorWithRed:0.35 green:0 blue:0 alpha:1];
@@ -702,18 +758,22 @@ static const CGFloat ESPillInsetY = 3;
     _hudTimer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self
                                                selector:@selector(_updateHUD) userInfo:nil repeats:YES];
     NSLog(@"[main] session started, archive %@", _archiveURL.lastPathComponent);
-    [self _showMessage:[NSString stringWithFormat:@"Recording to %@, audio: %@",
-                        _archiveURL.lastPathComponent, _engine.currentAudioRouteName ?: @"built in"]];
+    [self _appendLog:[NSString stringWithFormat:@"Recording to %@, audio: %@",
+                      _archiveURL.lastPathComponent, _engine.currentAudioRouteName ?: @"built in"]];
 }
 
 - (void)_stopSession {
     if (!_sessionActive) return;
     [self _logInstrumentStatus];
     _sessionActive = NO;
+    _recordingAudioRoute = nil;
+    _recordingAudioWasExternal = NO;
+    [_recLamp setPulsing:NO];
     [_hudTimer invalidate];
     _hudTimer = nil;
 
-    [_engine stopRunning];
+    // Keep the camera session running: STOP ends the archive and broadcast,
+    // but the operator remains on a live, ready-to-record preview.
     [_governor stopObserving];
     [_networkGovernor stop];
     _networkGovernor = nil;
@@ -757,7 +817,6 @@ static const CGFloat ESPillInsetY = 3;
     }];
 
     [UIApplication sharedApplication].idleTimerDisabled = NO;
-    [self _updateIdleControls];
     [_startStopButton setTitle:@"REC" forState:UIControlStateNormal];
     _startStopButton.backgroundColor = UIColor.systemRedColor;
     [self _updateIdleLamps];
@@ -886,7 +945,17 @@ static const CGFloat ESPillInsetY = 3;
 
 - (void)captureEngine:(ESCaptureEngine *)engine audioRouteDidChange:(NSString *)routeName isExternal:(BOOL)isExternal {
     NSString *kind = isExternal ? @"USB" : @"built in";
-    [self _showMessage:[NSString stringWithFormat:@"Audio: %@ (%@)", routeName, kind]];
+    [self _appendLog:[NSString stringWithFormat:@"Audio: %@ (%@)", routeName, kind]];
+    BOOL changedDuringRecording = _sessionActive && _recordingAudioRoute.length > 0 &&
+        (![_recordingAudioRoute isEqualToString:routeName] || _recordingAudioWasExternal != isExternal);
+    if (changedDuringRecording) {
+        NSString *warning = _recordingAudioWasExternal && !isExternal
+            ? [NSString stringWithFormat:@"External microphone disconnected — now using %@", routeName]
+            : [NSString stringWithFormat:@"Audio input changed — now using %@", routeName];
+        [self _showTransientMessage:warning duration:4.0];
+    }
+    _recordingAudioRoute = routeName;
+    _recordingAudioWasExternal = isExternal;
 }
 
 - (void)captureEngine:(ESCaptureEngine *)engine didFailWithError:(NSError *)error {
@@ -978,10 +1047,14 @@ static const CGFloat ESPillInsetY = 3;
 
 - (void)_updateDockLamp {
     if (!_dockBridge.docked) {
-        _dockLamp.label.text = @"DOCK none";
-        [_dockLamp setDotColor:UIColor.grayColor];
+        BOOL wasVisible = !_dockLamp.hidden;
+        _dockLamp.hidden = YES;
+        if (wasVisible) [self.view setNeedsLayout];
         return;
     }
+    BOOL wasHidden = _dockLamp.hidden;
+    _dockLamp.hidden = NO;
+    if (wasHidden) [self.view setNeedsLayout];
     // HELD is the state that matters during a ceremony: the gimbal is docked
     // and has agreed to stay still.
     NSString *tracking = _dockBridge.systemTrackingEnabled ? @"TRK" : @"HELD";
@@ -1012,11 +1085,13 @@ static const CGFloat ESPillInsetY = 3;
                            hours, minutes, seconds, size / 1e9];
     BOOL writing = size > 0;
     [_recLamp setDotColor:writing ? UIColor.systemRedColor : UIColor.systemOrangeColor];
+    [_recLamp setPulsing:YES];
     // An interrupted session delivers nothing, so a lamp still counting up a
     // healthy REC is the one reading that would actively mislead.
     if (_engine.isInterrupted) {
         _recLamp.label.text = @"REC INTERRUPTED";
         [_recLamp setDotColor:UIColor.systemYellowColor];
+        [_recLamp setPulsing:NO];
     }
 
     if (_uploader) {
@@ -1051,6 +1126,19 @@ static const CGFloat ESPillInsetY = 3;
 }
 
 - (void)_updateTierLamp {
+    // A broadcast status only earns screen space once there is an actual,
+    // valid destination. Record-only work should not advertise an inactive
+    // subsystem to the operator.
+    BOOL broadcastConfigured = ESSettings.effectiveIngestURL.length > 0 && ESSettings.ingestHost.length > 0;
+    if (!broadcastConfigured) {
+        BOOL wasVisible = !_tierLamp.hidden;
+        _tierLamp.hidden = YES;
+        if (wasVisible) [self.view setNeedsLayout];
+        return;
+    }
+    BOOL wasHidden = _tierLamp.hidden;
+    _tierLamp.hidden = NO;
+    if (wasHidden) [self.view setNeedsLayout];
     if (!_sessionActive) {
         _tierLamp.label.text = @"BCAST idle";
         [_tierLamp setDotColor:UIColor.grayColor];
@@ -1080,6 +1168,7 @@ static const CGFloat ESPillInsetY = 3;
     [self _updateTierLamp];
     _recLamp.label.text = @"REC idle";
     [_recLamp setDotColor:UIColor.grayColor];
+    [_recLamp setPulsing:NO];
     _liveLamp.label.text = @"LIVE off";
     [_liveLamp setDotColor:UIColor.grayColor];
     [self _updateThermLampForState:_governor.thermalState];
@@ -1102,11 +1191,25 @@ static const CGFloat ESPillInsetY = 3;
 }
 
 - (void)_showMessage:(NSString *)message {
+    [_messageTimer invalidate];
+    _messageTimer = nil;
     _messageLabel.text = message;
     _messageLabel.hidden = (message.length == 0);
     // The pill is sized to the text, so a new message needs a new frame.
     [self.view setNeedsLayout];
     [self _appendLog:message];
+}
+
+- (void)_showTransientMessage:(NSString *)message duration:(NSTimeInterval)duration {
+    [self _showMessage:message];
+    __weak typeof(self) weakSelf = self;
+    _messageTimer = [NSTimer scheduledTimerWithTimeInterval:duration repeats:NO block:^(NSTimer *timer) {
+        typeof(self) strongSelf = weakSelf;
+        if (!strongSelf || ![strongSelf->_messageLabel.text isEqualToString:message]) return;
+        strongSelf->_messageLabel.text = @"";
+        strongSelf->_messageLabel.hidden = YES;
+        [strongSelf.view setNeedsLayout];
+    }];
 }
 
 - (NSString *)_batteryDescription {

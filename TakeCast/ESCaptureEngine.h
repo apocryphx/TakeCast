@@ -60,6 +60,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)startRunning;
 - (void)stopRunning;
+// Waits for the hardware session to stop. Use before changing formats while a
+// preview is live; configureWithFrameRate: requires a stopped session.
+- (void)stopRunningAndWait;
 
 // Zoom, usable live. Ramped moves use a slow on-air rate near 0.75x per second.
 - (void)setZoomFactor:(CGFloat)factor ramped:(BOOL)ramped;

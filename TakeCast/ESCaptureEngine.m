@@ -491,6 +491,14 @@ static NSString *ESNameForInterruptionReason(AVCaptureSessionInterruptionReason 
     });
 }
 
+- (void)stopRunningAndWait {
+    dispatch_sync(_sessionQueue, ^{
+        if (!self->_session.isRunning) return;
+        [self->_session stopRunning];
+        NSLog(@"[engine] session stopped for reconfiguration");
+    });
+}
+
 - (BOOL)isRunning {
     return _session.isRunning;
 }

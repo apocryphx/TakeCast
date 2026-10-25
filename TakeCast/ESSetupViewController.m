@@ -21,6 +21,73 @@ typedef NS_ENUM(NSInteger, ESSetupSection) {
 static NSString * const ESSetupCellID = @"cell";
 static NSString * const ESSetupCheckCellID = @"check";
 
+@interface ESSetupHeaderView : UIView
+@end
+
+@implementation ESSetupHeaderView {
+    CAGradientLayer *_gradient;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        _gradient = [CAGradientLayer layer];
+        _gradient.colors = @[(id)[UIColor.systemIndigoColor colorWithAlphaComponent:0.96].CGColor,
+                             (id)[UIColor.systemBlueColor colorWithAlphaComponent:0.92].CGColor];
+        _gradient.startPoint = CGPointMake(0, 0);
+        _gradient.endPoint = CGPointMake(1, 1);
+        [self.layer insertSublayer:_gradient atIndex:0];
+
+        UIView *badge = [[UIView alloc] init];
+        badge.backgroundColor = [UIColor colorWithWhite:1 alpha:0.17];
+        badge.layer.cornerRadius = 24;
+        badge.translatesAutoresizingMaskIntoConstraints = NO;
+        UIImageView *icon = [[UIImageView alloc] initWithImage:[UIImage systemImageNamed:@"checkmark.shield.fill"]];
+        icon.tintColor = UIColor.whiteColor;
+        icon.preferredSymbolConfiguration = [UIImageSymbolConfiguration configurationWithPointSize:23 weight:UIImageSymbolWeightBold];
+        icon.translatesAutoresizingMaskIntoConstraints = NO;
+        [badge addSubview:icon];
+
+        UILabel *title = [[UILabel alloc] init];
+        title.text = @"Set up with confidence";
+        title.font = [UIFont systemFontOfSize:21 weight:UIFontWeightBold];
+        title.textColor = UIColor.whiteColor;
+        title.translatesAutoresizingMaskIntoConstraints = NO;
+        UILabel *detail = [[UILabel alloc] init];
+        detail.text = @"Choose your destination, then let the pre-flight checks look after the details.";
+        detail.numberOfLines = 0;
+        detail.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
+        detail.adjustsFontForContentSizeCategory = YES;
+        detail.textColor = [UIColor colorWithWhite:1 alpha:0.82];
+        detail.translatesAutoresizingMaskIntoConstraints = NO;
+        [self addSubview:badge];
+        [self addSubview:title];
+        [self addSubview:detail];
+        [NSLayoutConstraint activateConstraints:@[
+            [badge.leadingAnchor constraintEqualToAnchor:self.leadingAnchor constant:24],
+            [badge.centerYAnchor constraintEqualToAnchor:self.centerYAnchor],
+            [badge.widthAnchor constraintEqualToConstant:48],
+            [badge.heightAnchor constraintEqualToConstant:48],
+            [icon.centerXAnchor constraintEqualToAnchor:badge.centerXAnchor],
+            [icon.centerYAnchor constraintEqualToAnchor:badge.centerYAnchor],
+            [title.leadingAnchor constraintEqualToAnchor:badge.trailingAnchor constant:14],
+            [title.trailingAnchor constraintEqualToAnchor:self.trailingAnchor constant:-24],
+            [title.topAnchor constraintEqualToAnchor:self.topAnchor constant:26],
+            [detail.leadingAnchor constraintEqualToAnchor:title.leadingAnchor],
+            [detail.trailingAnchor constraintEqualToAnchor:title.trailingAnchor],
+            [detail.topAnchor constraintEqualToAnchor:title.bottomAnchor constant:4],
+        ]];
+    }
+    return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    _gradient.frame = self.bounds;
+}
+
+@end
+
 @interface ESSetupViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 @end
 
@@ -28,21 +95,20 @@ static NSString * const ESSetupCheckCellID = @"check";
     ESPreflight *_preflight;
     NSArray<ESPreflightCheck *> *_checks;
     UITableView *_tableView;
+    ESSetupHeaderView *_tableHeaderView;
+    UIView *_tableFooterView;
     UISwitch *_streamSwitch;
     UITextField *_ingestField;
     UILabel *_destinationFooter;
     UISegmentedControl *_fpsControl;
     UISegmentedControl *_codecControl;
     UISegmentedControl *_micControl;
-    BOOL _showsAdvanced;
 }
 
 - (instancetype)initWithThermalGovernor:(ESThermalGovernor *)governor dockBridge:(ESDockKitBridge *)dockBridge {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
         _preflight = [[ESPreflight alloc] initWithThermalGovernor:governor dockBridge:dockBridge];
-        // An HEVC choice made earlier stays visible rather than hiding behind the disclosure.
-        _showsAdvanced = ESSettings.broadcastUsesHEVC;
     }
     return self;
 }
@@ -74,10 +140,39 @@ static NSString * const ESSetupCheckCellID = @"check";
         [_tableView.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor],
         [_tableView.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor],
     ]];
-    _tableView.tableFooterView = [self _footerView];
+    // A table view measures its chrome once during construction, before its
+    // Auto Layout constraints have given it a width. Attach these only after
+    // that first real layout pass; otherwise the header's content is forced
+    // into a zero-width encapsulated frame and UIKit emits a constraint warning.
+    _tableHeaderView = [[ESSetupHeaderView alloc] initWithFrame:CGRectMake(0, 0, 0, 118)];
+    _tableFooterView = [self _footerView];
 
     _checks = [_preflight currentChecks];
     _preflight.changeHandler = ^{ [weakSelf _refreshChecks]; };
+}
+
+- (void)viewDidLayoutSubviews {
+    [super viewDidLayoutSubviews];
+
+    CGFloat width = CGRectGetWidth(_tableView.bounds);
+    if (width <= 0) return;
+
+    [self _installTableChrome:_tableHeaderView height:118 isHeader:YES width:width];
+    [self _installTableChrome:_tableFooterView height:120 isHeader:NO width:width];
+}
+
+- (void)_installTableChrome:(UIView *)view height:(CGFloat)height isHeader:(BOOL)isHeader width:(CGFloat)width {
+    CGRect frame = view.frame;
+    if ((isHeader ? _tableView.tableHeaderView : _tableView.tableFooterView) == view &&
+        fabs(frame.size.width - width) < 0.5 && fabs(frame.size.height - height) < 0.5) {
+        return;
+    }
+    view.frame = CGRectMake(0, 0, width, height);
+    if (isHeader) {
+        _tableView.tableHeaderView = view;
+    } else {
+        _tableView.tableFooterView = view;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -91,7 +186,7 @@ static NSString * const ESSetupCheckCellID = @"check";
     [_preflight stop];
 }
 
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations { return UIInterfaceOrientationMaskLandscape; }
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations { return UIInterfaceOrientationMaskAllButUpsideDown; }
 
 #pragma mark Controls
 
@@ -312,7 +407,7 @@ static NSString * const ESSetupCheckCellID = @"check";
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch ((ESSetupSection)section) {
         case ESSetupSectionDestination: return _streamSwitch.on ? 2 : 1;
-        case ESSetupSectionVideo: return _showsAdvanced ? 3 : 2;
+        case ESSetupSectionVideo: return 2;
         case ESSetupSectionAudio: return 1;
         case ESSetupSectionChecks: return (NSInteger)_checks.count;
         case ESSetupSectionCount: break;
@@ -349,10 +444,8 @@ static NSString * const ESSetupCheckCellID = @"check";
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section {
     switch ((ESSetupSection)section) {
         case ESSetupSectionVideo:
-            return _showsAdvanced
-                ? @"The 4K recording is always HEVC. HEVC for the stream is smaller and needs less uplink power "
-                  @"on a weak signal, but your YouTube setup must accept it. If unsure, keep H.264."
-                : nil;
+            return @"The 4K recording is always HEVC. HEVC for the stream is smaller and needs less uplink power "
+                   @"on a weak signal, but your YouTube setup must accept it. If unsure, keep H.264.";
         case ESSetupSectionAudio:
             return @"CARD aims the built-in mic where the lens points. OMNI takes in the whole room. "
                    @"An external microphone is used automatically when connected.";
@@ -375,11 +468,15 @@ static NSString * const ESSetupCheckCellID = @"check";
     cell.accessoryType = UITableViewCellAccessoryNone;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     UIListContentConfiguration *content = [UIListContentConfiguration cellConfiguration];
+    NSString *symbol = nil;
+    UIColor *symbolColor = UIColor.tintColor;
 
     switch ((ESSetupSection)indexPath.section) {
         case ESSetupSectionDestination:
             if (indexPath.row == 0) {
                 content.text = @"Stream to YouTube";
+                symbol = @"dot.radiowaves.left.and.right";
+                symbolColor = UIColor.systemPinkColor;
                 cell.accessoryView = _streamSwitch;
             } else {
                 content = nil;
@@ -399,28 +496,31 @@ static NSString * const ESSetupCheckCellID = @"check";
             if (indexPath.row == 0) {
                 content.text = @"Frame rate";
                 content.secondaryText = @"fps";
+                symbol = @"film";
+                symbolColor = UIColor.systemBlueColor;
                 cell.accessoryView = _fpsControl;
                 [_fpsControl sizeToFit];
-            } else if (indexPath.row == 1) {
-                content.text = @"Advanced";
-                content.textProperties.color = UIColor.tintColor;
-                cell.selectionStyle = UITableViewCellSelectionStyleDefault;
-                UIImageView *chevron = [[UIImageView alloc] initWithImage:
-                    [UIImage systemImageNamed:_showsAdvanced ? @"chevron.up" : @"chevron.down"]];
-                cell.accessoryView = chevron;
             } else {
                 content.text = @"Stream codec";
+                symbol = @"bolt.fill";
+                symbolColor = UIColor.systemOrangeColor;
                 cell.accessoryView = _codecControl;
                 [_codecControl sizeToFit];
             }
             break;
         case ESSetupSectionAudio:
             content.text = @"Microphone pattern";
+            symbol = @"mic.fill";
+            symbolColor = UIColor.systemTealColor;
             cell.accessoryView = _micControl;
             [_micControl sizeToFit];
             break;
         default:
             break;
+    }
+    if (content && symbol) {
+        content.image = [UIImage systemImageNamed:symbol];
+        content.imageProperties.tintColor = symbolColor;
     }
     cell.contentConfiguration = content;
     return cell;
@@ -464,28 +564,13 @@ static NSString * const ESSetupCheckCellID = @"check";
 }
 
 - (BOOL)tableView:(UITableView *)tableView shouldHighlightRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == ESSetupSectionVideo) return indexPath.row == 1;
     if (indexPath.section == ESSetupSectionChecks) return _checks[indexPath.row].action != ESPreflightActionNone;
     return NO;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section == ESSetupSectionVideo && indexPath.row == 1) {
-        _showsAdvanced = !_showsAdvanced;
-        NSIndexPath *codecRow = [NSIndexPath indexPathForRow:2 inSection:ESSetupSectionVideo];
-        [tableView performBatchUpdates:^{
-            if (self->_showsAdvanced) {
-                [tableView insertRowsAtIndexPaths:@[codecRow] withRowAnimation:UITableViewRowAnimationFade];
-            } else {
-                [tableView deleteRowsAtIndexPaths:@[codecRow] withRowAnimation:UITableViewRowAnimationFade];
-            }
-            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationNone];
-        } completion:^(BOOL finished) {
-            [tableView reloadSections:[NSIndexSet indexSetWithIndex:ESSetupSectionVideo]
-                     withRowAnimation:UITableViewRowAnimationNone];
-        }];
-    } else if (indexPath.section == ESSetupSectionChecks) {
+    if (indexPath.section == ESSetupSectionChecks) {
         [self _performAction:_checks[indexPath.row].action];
     }
 }
